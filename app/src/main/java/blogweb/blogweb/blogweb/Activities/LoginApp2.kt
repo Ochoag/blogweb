@@ -72,6 +72,13 @@ class LoginApp2 : AppCompatActivity() {
                                 Log.d("TAG", "Datos mostrados")
                             } else {
                                 Log.d("TAG", "NO HAY DATOS")
+                                GlobalScope.launch (Dispatchers.Main) {
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Usuario no registrado",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
                         }
                     }
@@ -79,6 +86,30 @@ class LoginApp2 : AppCompatActivity() {
                     if (capabilities != null) {
                         if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || capabilities.hasTransport(
                                 NetworkCapabilities.TRANSPORT_WIFI)) {
+                            GlobalScope.launch (Dispatchers.IO) {
+                                val a = databaseModule.provideAppDatabase(applicationContext)!!
+                                    .usersDAO()!!
+                                    .findUser(email.text.toString(), numtel.text.toString())
+
+                                if (a.isNotEmpty()) {
+                                    for (user in a) {
+                                        Log.d("TAG", "Usuario ID: ${user.iduser}")
+                                        guardarValor(
+                                            applicationContext,
+                                            "idlocal",
+                                            user.iduser.toString()
+                                        )
+
+                                        val i1 =
+                                            Intent(applicationContext, MainActivity::class.java)
+                                        startActivity(i1)
+                                    }
+                                    Log.d("TAG", "Datos mostrados")
+                                } else {
+                                    Log.d("TAG", "NO HAY DATOS")
+                                }
+                            }
+
                             viewModelLogin =
                                 ViewModelProvider(this).get(Login::class.java)
 
@@ -122,6 +153,13 @@ class LoginApp2 : AppCompatActivity() {
 
                                 if (t > 0) {
                                     Log.d("TAG", "INSERCION CON EXITO")
+                                    GlobalScope.launch (Dispatchers.Main) {
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Usuario registrado con exito",
+                                            Toast.LENGTH_LONG
+                                        ).show()
+                                    }
                                 } else {
                                     Log.d("TAG", "NO EXITO")
                                 }

@@ -13,8 +13,8 @@ android {
         applicationId = "blogweb.blogweb.blogweb"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -64,7 +64,6 @@ dependencies {
     implementation ("androidx.core:core-ktx:1.7.0")
     implementation ("androidx.appcompat:appcompat:1.4.1")
     implementation ("com.google.android.material:material:1.5.0")
-    implementation ("com.android.volley:volley:1.2.0")
     implementation ("androidx.room:room-runtime:2.0.0")
     kapt ("androidx.room:room-compiler:2.0.0")
     testImplementation ("junit:junit:4.13.2")
