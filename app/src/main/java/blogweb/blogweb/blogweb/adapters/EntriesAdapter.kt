@@ -35,16 +35,16 @@ class PURCViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView){
 
     fun initialize(item: CompleteEntries, action:OnPURCItemClickListner){
 
-        binding.textView559.text = item.titulo
-        binding.textView600.text = item.autor
-        binding.textView601.text = item.fechapublicacion
+        binding.textView559.text = "Titulo: " + item.titulo
+        binding.textView600.text = "Autor: " + item.autor
+        binding.textView601.text = "Fecha de publicacion: " + item.fechapublicacion
 
         val primeros70Caracteres: String
         if (item.contenido.length > 70) {
-            primeros70Caracteres = item.contenido.substring(0, 70)
+            primeros70Caracteres = "Contenido: " + item.contenido.substring(0, 70)
             binding.textView602.text = primeros70Caracteres
         } else {
-            binding.textView602.text = item.contenido
+            binding.textView602.text = "Contenido: " + item.contenido
         }
 
 

@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,14 @@ import blogweb.blogweb.blogweb.Objects.CompleteEntries
 import blogweb.blogweb.blogweb.R
 import blogweb.blogweb.blogweb.adapters.EntriesAdapter
 import blogweb.blogweb.blogweb.adapters.OnPURCItemClickListner
+import blogweb.blogweb.blogweb.db.DatabaseModule
+import blogweb.blogweb.blogweb.db.dao.WebblogDAO
+import blogweb.blogweb.blogweb.db.database.AppDb
+import blogweb.blogweb.blogweb.db.entity.Webblog
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class BlankFragment2 : Fragment(), OnPURCItemClickListner {
@@ -42,6 +51,9 @@ class BlankFragment2 : Fragment(), OnPURCItemClickListner {
     var arraycont = ArrayList<CompleteEntries>()
     var recy : RecyclerView? = null
     var desc : Button? = null
+
+    @Inject
+    lateinit var databaseModule : DatabaseModule
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -76,8 +88,40 @@ class BlankFragment2 : Fragment(), OnPURCItemClickListner {
         if (connectivityManager != null) {
 
             val capabilities : NetworkCapabilities? = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+
             if (capabilities == null) {
                desc!!.visibility = View.GONE
+                search!!.visibility = View.GONE
+                btntit!!.visibility = View.GONE
+                btnaut!!.visibility = View.GONE
+                btncont!!.visibility = View.GONE
+
+                GlobalScope.launch(Dispatchers.IO) {
+                    val iduser = leerValor(requireContext(), "idlocal") // Obtén el valor del iduser
+
+                    if (iduser != null) {
+                        val a = databaseModule.provideAppDatabase(requireContext())!!.webblogDAO()!!
+                            .findBlogs(iduser.toInt())
+
+                        if (a.isNotEmpty()) {
+                            for (data in a) {
+                                arraytit.add(
+                                    CompleteEntries(
+                                        data.iduser.toString(),
+                                        data.titulo,
+                                        data.autor,
+                                        data.fechapublicacion,
+                                        data.contenido
+                                    )
+                                )
+                                recy!!.adapter = EntriesAdapter(arraytit, this@BlankFragment2)
+                            }
+                            Log.d("TAG", "Datos mostrados")
+                        } else {
+                            Log.d("TAG", "NO HAY DATOS")
+                        }
+                    }
+                }
             }
         }
 
@@ -238,6 +282,25 @@ class BlankFragment2 : Fragment(), OnPURCItemClickListner {
     override fun onItemClick(item: CompleteEntries, position: Int) {
 
         if(!desc!!.isEnabled){
+            val iduser = leerValor(requireContext(), "idlocal") // Obtén el valor del iduser
+
+            val webblog = Webblog()
+            webblog.titulo = item.titulo
+            webblog.autor = item.autor
+            webblog.fechapublicacion = item.fechapublicacion
+            webblog.contenido = item.contenido
+            webblog.iduser = iduser!!.toInt()
+
+            GlobalScope.launch(Dispatchers.IO) {
+                val t = databaseModule.provideAppDatabase(requireContext())!!.webblogDAO()
+                    .insert(webblog)
+
+                if (t > 0) {
+                    Log.d("TAG", "INSERCION CON EXITO")
+                } else {
+                    Log.d("TAG", "NO EXITO")
+                }
+            }
 
         }else {
             val i1 = Intent(requireContext(), Content::class.java)

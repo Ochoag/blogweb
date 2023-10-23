@@ -43,7 +43,7 @@ class ContentAdapter(var contexto: Context, items:ArrayList<EntriesContent>): Re
     override fun onBindViewHolder(holder: ContentAdapter.ViewHolder, position: Int) {
         val item = items?.get(position)
 
-        holder.contenido!!.text = item!!.contenido
+        holder.contenido!!.text = "Contenido: " + item!!.contenido
     }
 
     class ViewHolder(vista: View): RecyclerView.ViewHolder(vista){

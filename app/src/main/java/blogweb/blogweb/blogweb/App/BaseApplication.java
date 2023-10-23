@@ -7,7 +7,7 @@ import blogweb.blogweb.blogweb.Api.DaggerApiComponent;
 
 public class BaseApplication extends MultiDexApplication {
 
-    private ApiComponent appComponent = DaggerApiComponent.create();
+    public ApiComponent appComponent = DaggerApiComponent.create();
 
     public ApiComponent getAppComponent() {
         return appComponent;
