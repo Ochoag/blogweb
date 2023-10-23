@@ -180,6 +180,29 @@ class LoginApp : AppCompatActivity() {
 
                         if (capabilities != null) {
                             if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) || capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    val newUser = Users()
+                                    newUser.email = email.text.toString()
+                                    newUser.phn = numtel.text.toString()
+
+                                    GlobalScope.launch(Dispatchers.IO) {
+                                        val t = databaseModule.provideAppDatabase(applicationContext)!!.usersDAO()!!.insert(newUser)
+
+                                        if(t > 0){
+                                            Log.d("TAG", "INSERCION CON EXITO")
+                                            GlobalScope.launch (Dispatchers.Main) {
+                                                Toast.makeText(
+                                                    applicationContext,
+                                                    "Usuario registrado con exito",
+                                                    Toast.LENGTH_LONG
+                                                ).show()
+                                            }
+                                        }else{
+                                            Log.d("TAG", "NO EXITO")
+                                        }
+                                    }
+                                }
+
                                 viewModelRegister =
                                     ViewModelProvider(this).get(Register::class.java)
 
